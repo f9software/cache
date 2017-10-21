@@ -3,5 +3,7 @@ export interface IGateway {
 
     set(key: string, value: any);
 
+    remove(key: string);
+
     clear();
 }

@@ -19,6 +19,10 @@ export class LocalStorageGateway implements IGateway {
         this.ls.setItem(this.key(key), JSON.stringify(value));
     }
 
+    remove(key: string) {
+        this.ls.removeItem(this.key(key));
+    }
+
     clear() {
         const partialKey = this.key('');
 
