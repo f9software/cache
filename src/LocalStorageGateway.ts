@@ -3,17 +3,32 @@ import {IGateway} from "./Gateway";
 export class LocalStorageGateway implements IGateway {
     private ls;
 
+    private regex: RegExp;
+
     constructor(private id: string) {
         this.ls = window.localStorage;
+        this.regex = new RegExp(this.key('') + '(.*)');
     }
 
     private key(key: string) {
         return '#' + this.id + '#' + key;
     }
 
+    /**
+     * It returns the keys that this gateway is working with. It does not return other localStorage keys.
+     * @returns {string[]}
+     */
     getKeys(): string[] {
-        const match = this.key('');
-        return Object.keys(localStorage).filter(key => key.indexOf(match) === 0);
+        return Object.keys(localStorage)
+            .map(key => {
+                const match = key.match(this.regex);
+                if (match !== null) {
+                    return match[1];
+                }
+
+                return null;
+            })
+            .filter(key => key !== null);
     }
 
     get(key: string) {
