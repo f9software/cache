@@ -11,6 +11,11 @@ export class LocalStorageGateway implements IGateway {
         return '#' + this.id + '#' + key;
     }
 
+    getKeys(): string[] {
+        const match = this.key('');
+        return Object.keys(localStorage).filter(key => key.indexOf(match) === 0);
+    }
+
     get(key: string) {
         return JSON.parse(this.ls.getItem(this.key(key)));
     }

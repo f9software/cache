@@ -2,6 +2,8 @@ import {IGateway} from "./Gateway";
 import {Manager} from "./Manager";
 
 export interface ICache {
+    getKeys(): string[];
+
     get(key: string);
 
     set(key: string, value: any);
@@ -27,16 +29,17 @@ export class Cache implements ICache {
         Manager.register(this);
     }
 
+    getKeys(): string[] {
+        return this.gateway.getKeys().filter(key => key !== Cache.LIFETIME_KEY);
+    }
+
     get(key: string) {
         return this.gateway.get(key);
     }
 
     set(key: string, value: any, lifetime?: number) {
         this.gateway.set(key, value);
-
-        if (key !== Cache.LIFETIME_KEY) {
-            this.updateLifetime(key, lifetime || this.lifetime);
-        }
+        this.updateLifetime(key, lifetime || this.lifetime);
     }
 
     remove(key: string) {
