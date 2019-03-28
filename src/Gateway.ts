@@ -3,9 +3,9 @@ export interface IGateway {
 
     get(key: string): any;
 
-    set(key: string, value: any): never;
+    set(key: string, value: any): void;
 
-    remove(key: string): never;
+    remove(key: string): void;
 
-    clear(): never;
+    clear(): void;
 }

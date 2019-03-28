@@ -25,8 +25,10 @@ export class Manager {
         }
 
         Manager.started = false;
-        clearInterval(Manager.intervalId);
-        Manager.intervalId = null;
+        if (Manager.intervalId !== null) {
+            clearInterval(Manager.intervalId);
+            Manager.intervalId = null;
+        }
     }
 
     public static register(cache: ICache) {
@@ -48,12 +50,12 @@ export class Manager {
 
     public static validate(cache: ICache) {
         const lifetime = cache.getLifetime();
-        const remove = [];
+        const remove: string[] = [];
 
         Object.keys(lifetime)
             .forEach(
                 (key) => {
-                    if (lifetime[key] <= Manager.now) {
+                    if (Manager.now === null || lifetime[key] <= Manager.now) {
                         remove.push(key);
                     }
                 },
@@ -68,9 +70,9 @@ export class Manager {
 
     private static started: boolean = false;
 
-    private static intervalId: number;
+    private static intervalId: number | null = null;
 
-    private static now: number;
+    private static now: number | null = null;
 
     private static interval: number = 15000;
 

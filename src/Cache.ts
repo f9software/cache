@@ -6,13 +6,13 @@ export interface ICache {
 
     get(key: string): any;
 
-    set(key: string, value: any);
+    set(key: string, value: any): void;
 
-    remove(key: string);
+    remove(key: string): void;
 
-    removeMany(keys: string[]);
+    removeMany(keys: string[]): void;
 
-    clear();
+    clear(): void;
 
     getLifetime(): {[key: string]: number};
 }
@@ -76,13 +76,13 @@ export class Cache implements ICache {
         this.setLifetime(lifetime);
     }
 
-    private updateLifetime(key, lifetime: number) {
+    private updateLifetime(key: string, lifetime: number) {
         const lifetimeAll = this.getLifetime();
         lifetimeAll[key] = Math.round(new Date().getTime() / 1000) + lifetime;
         this.setLifetime(lifetimeAll);
     }
 
-    private setLifetime(lifetime) {
+    private setLifetime(lifetime: {[key: string]: number}) {
         this.gateway.set(Cache.LIFETIME_KEY, lifetime);
     }
 }

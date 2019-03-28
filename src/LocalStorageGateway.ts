@@ -27,7 +27,13 @@ export class LocalStorageGateway implements IGateway {
     }
 
     public get(key: string): any {
-        return JSON.parse(this.ls.getItem(this.key(key)));
+        const value = this.ls.getItem(this.key(key));
+
+        if (value) {
+            return JSON.parse(value);
+        }
+
+        return undefined;
     }
 
     public set(key: string, value: any) {
