@@ -1,16 +1,6 @@
 import {ICache} from "./Cache";
 
 export class Manager {
-    private static all: ICache[] = [];
-
-    private static started: boolean = false;
-
-    private static intervalId: number;
-
-    private static now: number;
-
-    private static interval: number = 15000;
-
     public static setInterval(seconds: number) {
         Manager.interval = seconds * 1000;
 
@@ -56,27 +46,37 @@ export class Manager {
         }
     }
 
-    private static validateAll() {
-        Manager.now = Math.round(new Date().getTime() / 1000);
-        Manager.all.forEach(Manager.validate);
-        Manager.now = null;
-    }
-
     public static validate(cache: ICache) {
         const lifetime = cache.getLifetime();
         const remove = [];
 
         Object.keys(lifetime)
             .forEach(
-                key => {
+                (key) => {
                     if (lifetime[key] <= Manager.now) {
                         remove.push(key);
                     }
-                }
+                },
             );
 
         if (remove.length > 0) {
             cache.removeMany(remove);
         }
+    }
+
+    private static all: ICache[] = [];
+
+    private static started: boolean = false;
+
+    private static intervalId: number;
+
+    private static now: number;
+
+    private static interval: number = 15000;
+
+    private static validateAll() {
+        Manager.now = Math.round(new Date().getTime() / 1000);
+        Manager.all.forEach(Manager.validate);
+        Manager.now = null;
     }
 }

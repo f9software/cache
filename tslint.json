@@ -1,0 +1,35 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended",
+        "tslint-eslint-rules"
+    ],
+    "jsRules": {},
+    "rules": {
+        "no-constant-condition": true,
+        "no-control-regex": true,
+        "no-duplicate-case": true,
+        "no-extra-semi": true,
+        "no-inner-declarations": true,
+        "no-invalid-regexp": true,
+        "ter-no-irregular-whitespace": true,
+        "no-regex-spaces": true,
+        "ter-no-sparse-arrays": true,
+        "no-console": true,
+        "array-bracket-spacing": true,
+        "block-spacing": true,
+        "variable-name": true,
+        "ter-indent": [
+            true,
+            4,
+            {
+                "FunctionExpression": {
+                    "parameters": 1,
+                    "body": 1
+                },
+                "SwitchCase": 1
+            }
+        ]
+    },
+    "rulesDirectory": []
+}

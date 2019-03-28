@@ -4,7 +4,7 @@ import {Manager} from "./Manager";
 export interface ICache {
     getKeys(): string[];
 
-    get(key: string);
+    get(key: string): any;
 
     set(key: string, value: any);
 
@@ -18,7 +18,7 @@ export interface ICache {
 }
 
 export class Cache implements ICache {
-    public static readonly LIFETIME_KEY: string = '#';
+    public static readonly LIFETIME_KEY: string = "#";
 
     /**
      *
@@ -29,30 +29,51 @@ export class Cache implements ICache {
         Manager.register(this);
     }
 
-    getKeys(): string[] {
-        return this.gateway.getKeys().filter(key => key !== Cache.LIFETIME_KEY);
+    public getKeys(): string[] {
+        return this.gateway.getKeys().filter((key) => key !== Cache.LIFETIME_KEY);
     }
 
-    get(key: string) {
+    public get(key: string): any {
         return this.gateway.get(key);
     }
 
-    set(key: string, value: any, lifetime?: number) {
+    public set(key: string, value: any, lifetime: number = this.lifetime) {
         this.gateway.set(key, value);
-        this.updateLifetime(key, lifetime || this.lifetime);
+        this.updateLifetime(key, lifetime);
     }
 
-    remove(key: string) {
+    public remove(key: string) {
         this.gateway.remove(key);
     }
 
-    clear() {
+    public clear() {
         this.gateway.clear();
         this.setLifetime({});
     }
 
     public getLifetime(): {[key: string]: number} {
         return this.gateway.get(Cache.LIFETIME_KEY) || {};
+    }
+
+    /**
+     * Remove multiple keys at once. It is optimal to use this method when removing multiple keys at once because the
+     * gateway only updates the lifetime once.
+     * @param {string} keys
+     */
+    public removeMany(keys: string[]) {
+        keys.forEach((key) => this.gateway.remove(key));
+
+        const lifetime = this.getLifetime();
+        Object.keys(lifetime)
+            .forEach((key) => {
+                const index = keys.indexOf(key);
+
+                if (index > -1) {
+                    delete lifetime[key];
+                }
+            });
+
+        this.setLifetime(lifetime);
     }
 
     private updateLifetime(key, lifetime: number) {
@@ -63,26 +84,5 @@ export class Cache implements ICache {
 
     private setLifetime(lifetime) {
         this.gateway.set(Cache.LIFETIME_KEY, lifetime);
-    }
-
-    /**
-     * Remove multiple keys at once. It is optimal to use this method when removing multiple keys at once because the
-     * gateway only updates the lifetime once.
-     * @param {string} keys
-     */
-    public removeMany(keys: string[]) {
-        keys.forEach(key => this.gateway.remove(key));
-
-        const lifetime = this.getLifetime();
-        Object.keys(lifetime)
-            .forEach(key => {
-                const index = keys.indexOf(key);
-
-                if (index > -1) {
-                    delete lifetime[key];
-                }
-            });
-
-        this.setLifetime(lifetime);
     }
 }
